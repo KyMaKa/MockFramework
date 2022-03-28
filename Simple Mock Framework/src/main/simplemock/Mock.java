@@ -22,13 +22,9 @@ public class Mock<T> {
     private final Class<T> mockedType;
 
     /**
-     * Shouldn't be a need to instantiate this outside of
-     * {@link SimpleMock#mockType(Class)}
-     *
      * @param mockedType
      *            type of mocked instance wrapped within an instance of this
-     *            class. Specified again here since the parameterized <T> type
-     *            is erased during compilation
+     *            class.
      */
     Mock(Class<T> mockedType) {
         this.mockedType = mockedType;
@@ -37,11 +33,6 @@ public class Mock<T> {
     /**
      * Use this to specify a return value for a specific method. By default,
      * mocked methods will return 'null'.
-     * <p>
-     * NOTE: Calling this method will overwrite any previous
-     * {@link Mock#setReturnValue(Object, String, Class...)} and
-     * {@link Mock#setMockImplmentation(MethodMock, String, Class...)} calls on
-     * this instance
      *
      * @param returnValue
      *            value to be returned when the mocked method is called
@@ -50,11 +41,11 @@ public class Mock<T> {
      * @param argumentTypes
      *            leave this blank if only one method by the specified name
      *            exists, or if return value for the no-arg method is being
-     *            mocked. Otherwise list the argument types in order they are
+     *            mocked. Otherwise, list the argument types in order they are
      *            specified for the method of interest.
      */
     public void setReturnValue(final Object returnValue, String methodName, Class<?>... argumentTypes) {
-        setMockImplmentation(new MethodMock() {
+        setMockImplementation(new MethodMock() {
             @Override
             public Object runMockImplementation(Object[] args) {
                 return returnValue;
@@ -63,15 +54,9 @@ public class Mock<T> {
     }
 
     /**
-     * A lot more flexible than
-     * {@link Mock#setReturnValue(Object, String, Class...)}, this method allows
+     * This method allows
      * you to define a mock implementation of the instance method of interest
-     * using the {@link MethodMock} interface
-     * <p>
-     * NOTE: Calling this method will overwrite any previous
-     * {@link Mock#setReturnValue(Object, String, Class...)} and
-     * {@link Mock#setMockImplmentation(MethodMock, String, Class...)} calls on
-     * this instance
+     * using the MethodMock interface
      *
      * @param mockImpl
      *            new implementation of the method
@@ -80,10 +65,10 @@ public class Mock<T> {
      * @param argumentTypes
      *            leave this blank if only one method by the specified name
      *            exists, or if return value for the no-arg method is being
-     *            mocked. Otherwise list the argument types in order they are
+     *            mocked. Otherwise, list the argument types in order they are
      *            specified for the method of interest.
      */
-    public void setMockImplmentation(MethodMock mockImpl, String methodName, Class<?>... argumentTypes) {
+    public void setMockImplementation(MethodMock mockImpl, String methodName, Class<?>... argumentTypes) {
         Method method = findMethod(methodName, argumentTypes);
         responses.put(method, mockImpl);
     }
@@ -94,7 +79,7 @@ public class Mock<T> {
      * @param argumentTypes
      *            leave this blank if only one method by the specified name
      *            exists, or if the method of interest is a 'no-arg method'.
-     *            Otherwise list the argument types in order they are specified
+     *            Otherwise, list the argument types in order they are specified
      *            for the method of interest.
      * @return the arguments passed in during the last time the specified method
      *         was invoked. 'null' if method has not yet been invoked
@@ -114,7 +99,7 @@ public class Mock<T> {
      * @param argumentTypes
      *            leave this blank if only one method by the specified name
      *            exists, or if the method of interest is a 'no-arg method'.
-     *            Otherwise list the argument types in order they are specified
+     *            Otherwise, list the argument types in order they are specified
      *            for the method of interest.
      * @return the arguments passed in during each invocation of the specified
      *         method via the mocked instance
@@ -124,7 +109,7 @@ public class Mock<T> {
         Method method = findMethod(methodName, argumentTypes);
         ArrayList<Object[]> requests = capturedRequests.get(method);
         if (requests == null) {
-            return new ArrayList<Object[]>();
+            return new ArrayList<>();
         }
         return (List<Object[]>) requests.clone();
     }
@@ -137,7 +122,7 @@ public class Mock<T> {
      * @param argumentTypes
      *            leave this blank if only one method by the specified name
      *            exists, or if the method of interest is a 'no-arg method'.
-     *            Otherwise list the argument types in order they are specified
+     *            Otherwise, list the argument types in order they are specified
      *            for the method of interest.
      */
     public void clearCapturedRequests(String methodName, Class<?>... argumentTypes) {
@@ -161,7 +146,7 @@ public class Mock<T> {
      * @param args
      *            arguments to pass into the method during invocation
      * @return result of invocation. 'null' if a return value hasn't been set
-     *         using {@link Mock#setReturnValue(Object, String, Class...)}
+     *         using setReturnValue(Object, String, Class...)
      */
     Object runMethod(Method method, Object[] args) {
 
@@ -170,7 +155,7 @@ public class Mock<T> {
         synchronized (capturedRequests) {
             requests = capturedRequests.get(method);
             if (requests == null) {
-                requests = new ArrayList<Object[]>();
+                requests = new ArrayList<>();
                 capturedRequests.put(method, requests);
             }
         }

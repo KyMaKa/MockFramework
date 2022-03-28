@@ -22,7 +22,7 @@ public final class SimpleMock {
     /**
      * Creates a mocked instance of the given type. For interfaces a JAVA proxy
      * is used. For concrete class types, 'Code Generation Library' is used.
-     * NOTE: For concrete class types, only classes with a 'no-arg' constructor
+     * NOTE: Only classes with a 'no-arg' constructor
      * can be mocked
      *
      * @param <T>
@@ -36,7 +36,7 @@ public final class SimpleMock {
     public static <T> Mock<T> mockType(Class<T> toMock) {
 
         // instantiate mock container
-        final Mock<T> mock = new Mock<T>(toMock);
+        final Mock<T> mock = new Mock<>(toMock);
 
         // generate mocked instance
         if (toMock.isInterface()) {
@@ -45,7 +45,7 @@ public final class SimpleMock {
             InvocationHandler handler = new InvocationHandler() {
 
                 @Override
-                public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                public Object invoke(Object proxy, Method method, Object[] args) {
                     return mock.runMethod(method, args);
                 }
             };
@@ -57,8 +57,7 @@ public final class SimpleMock {
             MethodInterceptor handler = new MethodInterceptor() {
 
                 @Override
-                public Object intercept(Object object, Method method, Object[] args, MethodProxy proxy)
-                        throws Throwable {
+                public Object intercept(Object object, Method method, Object[] args, MethodProxy proxy) {
                     return mock.runMethod(method, args);
                 }
             };
@@ -130,9 +129,8 @@ public final class SimpleMock {
     }
 
     /**
-     * Same as {@link #getFieldValue(Object, String)}, but attempts to cast the
+     * Same as getFieldValue(Object, String), but attempts to cast the
      * returning value with the specified type
-     *
      *
      * @param <T>
      *            anticipated type of the field being returned
@@ -173,7 +171,7 @@ public final class SimpleMock {
     }
 
     /**
-     * Same as {@link #getStaticFieldValue(Class, String)}, but attempts to cast
+     * Same as getStaticFieldValue(Class, String), but attempts to cast
      * the returning value with the specified type
      *
      * @param <T>
